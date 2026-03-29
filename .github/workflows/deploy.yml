@@ -33,3 +33,14 @@ jobs:
 
       - name: Push image
         run: docker push ${{ secrets.AWS_ECR_URI }}:latest
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --region us-east-2 \
+            --name fastapi-cluster-small
+
+      - name: Deploy to EKS
+        run: |
+          kubectl apply -f deployment.yaml
+          kubectl rollout status deployment/fastapi-deployment        
